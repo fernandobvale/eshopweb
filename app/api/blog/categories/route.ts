@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSupabaseAdminClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient, TENANT_ID } from "@/lib/supabase/server";
 
 const CORS_HEADERS = {
     "Access-Control-Allow-Origin": "*",
@@ -40,6 +40,7 @@ export async function GET(req: NextRequest) {
         const { data, error } = await supabase
             .from("categories")
             .select("id, name, slug, description")
+            .eq("tenant_id", TENANT_ID)
             .order("name");
 
         if (error) {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { createSupabaseAdminClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient, TENANT_ID } from "@/lib/supabase/server";
 import { toSlug } from "@/lib/seo";
 
 type PublishBody = {
@@ -78,6 +78,7 @@ export async function GET() {
             endpoint: "/api/blog/publish",
             method: "POST",
             auth: "X-API-Key",
+            tenant_id: TENANT_ID,
             message: "Endpoint ativo. Use POST com Content-Type application/json.",
         },
         { status: 200, headers: CORS_HEADERS }
@@ -123,6 +124,7 @@ export async function POST(req: NextRequest) {
             const { data: category } = await supabase
                 .from("categories")
                 .select("id")
+                .eq("tenant_id", TENANT_ID)
                 .eq("slug", categorySlug)
                 .maybeSingle();
 
@@ -132,6 +134,7 @@ export async function POST(req: NextRequest) {
                 const { data: fallbackCategory } = await supabase
                     .from("categories")
                     .select("id")
+                    .eq("tenant_id", TENANT_ID)
                     .order("name")
                     .limit(1)
                     .maybeSingle();
@@ -143,6 +146,7 @@ export async function POST(req: NextRequest) {
         const { data: bySlug } = await supabase
             .from("posts")
             .select("id, slug")
+            .eq("tenant_id", TENANT_ID)
             .eq("slug", slug)
             .maybeSingle();
 
@@ -151,10 +155,12 @@ export async function POST(req: NextRequest) {
             : (await supabase
                 .from("posts")
                 .select("id, slug")
+                .eq("tenant_id", TENANT_ID)
                 .eq("title", title)
                 .maybeSingle()).data;
 
         const payload = {
+            tenant_id: TENANT_ID,
             title,
             slug,
             content,
@@ -177,6 +183,7 @@ export async function POST(req: NextRequest) {
                 .from("posts")
                 .update(payload)
                 .eq("id", existing.id)
+                .eq("tenant_id", TENANT_ID)
                 .select("id, slug")
                 .single();
 

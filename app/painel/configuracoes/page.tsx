@@ -1044,9 +1044,13 @@ export default function SettingsPage() {
                                         <pre className="text-xs text-neutral-300 whitespace-pre-wrap break-all leading-relaxed">
                                             {`NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=`}
+SUPABASE_SERVICE_ROLE_KEY=
+TENANT_ID=`}
                                         </pre>
                                     </div>
+                                    <p className="text-xs text-amber-300/90">
+                                        Defina um <code>TENANT_ID</code> único para cada blog (ex.: <code>empresariadoweb</code>, <code>eshopweb</code>).
+                                    </p>
                                     <button
                                         type="button"
                                         onClick={handleTestDbConnection}
@@ -1094,6 +1098,7 @@ SESSION_SECRET=`}
                                     <li>Clique em <strong>Use this template</strong> para criar um novo repositório para cada blog.</li>
                                     <li>Na Vercel, importe o novo repositório em <strong>Add New Project</strong>.</li>
                                     <li>Configure as variáveis de ambiente abaixo na Vercel.</li>
+                                    <li>Defina <code>TENANT_ID</code> com um valor exclusivo para este blog e que exista na tabela <code>tenants</code>.</li>
                                     <li>Defina o login local do admin em <code>ADMIN_EMAIL</code> e <code>ADMIN_PASSWORD_HASH</code>.</li>
                                     <li>Se for usar o mesmo Supabase, mantenha as mesmas chaves de banco.</li>
                                     <li>Faça o deploy e acesse <strong>/acesso</strong> para entrar no painel.</li>
@@ -1105,6 +1110,7 @@ SESSION_SECRET=`}
                                         {`NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
+TENANT_ID=
 ADMIN_EMAIL=
 ADMIN_PASSWORD_HASH=
 SESSION_SECRET=
@@ -1134,6 +1140,9 @@ SUPERSEO_API_KEY=`}
                                     <p><strong>Auth Header:</strong> <code>X-API-Key: SUA_CHAVE</code></p>
                                     <p>
                                         <strong>Variável obrigatória:</strong> <code>SUPERSEO_API_KEY</code> (deve ser igual à chave enviada no header).
+                                    </p>
+                                    <p>
+                                        <strong>Importante:</strong> a API publica no tenant definido em <code>TENANT_ID</code> do deploy atual.
                                     </p>
                                 </div>
 
