@@ -1,5 +1,6 @@
 import { createSupabaseAdminClient, TENANT_ID } from "@/lib/supabase/server";
 import { getSession } from "@/lib/session";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
     try {
@@ -39,6 +40,11 @@ export async function POST(req: Request) {
             .single();
 
         if (error) throw error;
+        revalidatePath("/");
+        revalidatePath("/sitemap.xml");
+        if (data?.slug) {
+            revalidatePath(`/${data.slug}`);
+        }
         return Response.json({ data });
     } catch (error: any) {
         return Response.json({ error: error.message }, { status: 500 });

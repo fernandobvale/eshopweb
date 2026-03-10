@@ -1,5 +1,6 @@
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { getSession } from "@/lib/session";
+import { revalidatePath } from "next/cache";
 
 export async function PUT(
     req: Request,
@@ -23,6 +24,11 @@ export async function PUT(
             .single();
 
         if (error) throw error;
+        revalidatePath("/");
+        revalidatePath("/sitemap.xml");
+        if (data?.slug) {
+            revalidatePath(`/${data.slug}`);
+        }
         return Response.json({ data });
     } catch (error: any) {
         return Response.json({ error: error.message }, { status: 500 });
@@ -41,9 +47,15 @@ export async function DELETE(
         }
 
         const supabase = createSupabaseAdminClient();
+        const { data: currentPage } = await supabase.from("pages").select("slug").eq("id", id).maybeSingle();
         const { error } = await supabase.from("pages").delete().eq("id", id);
 
         if (error) throw error;
+        revalidatePath("/");
+        revalidatePath("/sitemap.xml");
+        if (currentPage?.slug) {
+            revalidatePath(`/${currentPage.slug}`);
+        }
         return Response.json({ success: true });
     } catch (error: any) {
         return Response.json({ error: error.message }, { status: 500 });

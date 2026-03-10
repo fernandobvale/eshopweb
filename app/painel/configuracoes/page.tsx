@@ -310,7 +310,12 @@ export default function SettingsPage() {
     };
 
     const upsertInstitutionalPage = async (page: { title: string; slug: string; content: string }) => {
-        const existingPage = pages.find((item) => item.slug === page.slug);
+        const candidateSlugs =
+            page.slug === "termos"
+                ? ["termos", "termos-de-uso"]
+                : [page.slug];
+
+        const existingPage = pages.find((item) => candidateSlugs.includes(item.slug));
         const hasValidId = existingPage && existingPage.id && existingPage.id !== "undefined";
 
         const endpoint = hasValidId ? `/api/admin/pages/${existingPage.id}` : "/api/admin/pages";
@@ -374,7 +379,7 @@ export default function SettingsPage() {
                 },
                 terms: {
                     title: "Termos de Uso",
-                    slug: "termos-de-uso",
+                    slug: "termos",
                     content: buildTermsOfUseHtml({
                         blogName: finalBlogName,
                         contactEmail: finalContactEmail
